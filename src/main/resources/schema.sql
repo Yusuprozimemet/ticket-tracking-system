@@ -15,8 +15,8 @@ CREATE TABLE tickets(
     title TEXT NOT NULL,
     description TEXT,
     status TEXT NOT NULL,
-    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
-    updated_at TIMESTAMP,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMPTZ,
 
     FOREIGN KEY (project_id)
         REFERENCES projects (project_id)
