@@ -10,6 +10,21 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: test
+          POSTGRES_PASSWORD: test
+          POSTGRES_DB: test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
     steps:
     - uses: actions/checkout@v4
 
@@ -19,5 +34,5 @@ jobs:
         java-version: '25'
         distribution: 'temurin'
 
-    - name: Build with Maven
-      run: ./mvnw clean package -DskipTests --batch-mode
+    - name: Build and test with Maven
+      run: ./mvnw clean package --batch-mode
