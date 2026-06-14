@@ -1,6 +1,7 @@
-package net.hackyourfuture.tickettrackingsystem.model;
-import java.time.LocalDateTime;
+package net.hackyourfuture.tickettrackingsystem.dto.responses;
 
+import java.time.LocalDateTime;
+import net.hackyourfuture.tickettrackingsystem.model.Status;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -8,16 +9,16 @@ import lombok.NoArgsConstructor;
 
 @Data
 @Builder
-@AllArgsConstructor
 @NoArgsConstructor
-public class Ticket {
-    private long id;
-    private long projectId;
+@AllArgsConstructor
+public class TicketResponse {
+
+    private Long id;
+    private Long projectId;
     private String title;
     private String description;
     private Status status;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
-}
     
-
+}
