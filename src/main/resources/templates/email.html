@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ticket #{{ticketId}} {{action}}</title>
+</head>
+<body style="margin:0; padding:0; background-color:#f7f7f7; font-family:'Nunito','Segoe UI',Helvetica,Arial,sans-serif;">
+  <!-- preheader (hidden) -->
+  <div style="display:none; max-height:0; overflow:hidden; opacity:0;">
+    Ticket #{{ticketId}} was {{action}} — here's what's new.
+  </div>
+
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#f7f7f7; padding:24px 0;">
+    <tr>
+      <td align="center">
+        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:480px; background-color:#ffffff; border-radius:16px; overflow:hidden; box-shadow:0 4px 0 #e5e5e5;">
+
+          <!-- Header -->
+          <tr>
+            <td align="center" style="background-color:#58cc02; padding:32px 24px;">
+              <div style="width:64px; height:64px; margin:0 auto; background-color:#ffffff; border-radius:50%; text-align:center; line-height:64px; color:#58cc02; font-size:34px; font-weight:800;">&#10003;</div>
+              <div style="margin-top:16px; color:#ffffff; font-size:22px; font-weight:800; letter-spacing:-0.3px;">
+                Ticket #{{ticketId}} {{action}}!
+              </div>
+            </td>
+          </tr>
+
+          <!-- Body -->
+          <tr>
+            <td style="padding:28px 24px 8px 24px;">
+              <p style="margin:0 0 20px 0; color:#4b4b4b; font-size:16px; font-weight:700;">
+                Hey {{assignees}} &#128075;
+              </p>
+              <p style="margin:0 0 24px 0; color:#777777; font-size:15px; line-height:1.5;">
+                There's an update on a ticket you're working on. Keep up the great work! &#11088;
+              </p>
+
+              <!-- Detail card -->
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#f7f7f7; border:2px solid #e5e5e5; border-radius:12px;">
+                <tr>
+                  <td style="padding:16px 18px; border-bottom:2px solid #e5e5e5;">
+                    <div style="color:#afafaf; font-size:12px; font-weight:800; text-transform:uppercase; letter-spacing:0.5px;">Title</div>
+                    <div style="margin-top:4px; color:#3c3c3c; font-size:16px; font-weight:700;">{{title}}</div>
+                  </td>
+                </tr>
+                <tr>
+                  <td style="padding:16px 18px;">
+                    <div style="color:#afafaf; font-size:12px; font-weight:800; text-transform:uppercase; letter-spacing:0.5px;">Status</div>
+                    <div style="margin-top:6px;">
+                      <span style="display:inline-block; background-color:#ddf4ff; color:#1899d6; font-size:13px; font-weight:800; padding:6px 14px; border-radius:999px; text-transform:uppercase; letter-spacing:0.5px;">{{status}}</span>
+                    </div>
+                  </td>
+                </tr>
+              </table>
+
+              <!-- CTA -->
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:28px 0 8px 0;">
+                <tr>
+                  <td align="center">
+                    <a href="#" style="display:inline-block; background-color:#58cc02; color:#ffffff; font-size:15px; font-weight:800; text-decoration:none; text-transform:uppercase; letter-spacing:0.5px; padding:14px 32px; border-radius:12px; box-shadow:0 4px 0 #58a700;">
+                      View Ticket
+                    </a>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <!-- Footer -->
+          <tr>
+            <td align="center" style="padding:24px; border-top:2px solid #f0f0f0;">
+              <p style="margin:0; color:#afafaf; font-size:12px; line-height:1.5;">
+                You're receiving this because you're assigned to this ticket.<br />
+                Ticket Tracking System
+              </p>
+            </td>
+          </tr>
+
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>
