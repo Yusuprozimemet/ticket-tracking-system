@@ -10,8 +10,8 @@ import org.springframework.web.client.RestClient;
 public class RestClientConfig {
 
     @Bean
-    public RestClient resendRestClient(RestClient.Builder builder,@Value("${resend.api-key:}") String apiKey) {
-        return builder
+    public RestClient resendRestClient(@Value("${resend.api-key:}") String apiKey) {
+        return RestClient.builder()
                 .baseUrl("https://api.resend.com")
                 .defaultHeader(HttpHeaders.AUTHORIZATION, "Bearer " + apiKey)
                 .build();
