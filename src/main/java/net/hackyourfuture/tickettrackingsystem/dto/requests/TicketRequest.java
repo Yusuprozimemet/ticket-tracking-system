@@ -21,5 +21,7 @@ public class TicketRequest {
     @NotNull
     private Status status;
 
+    @NotNull
+    private Long projectId;
 
 }
