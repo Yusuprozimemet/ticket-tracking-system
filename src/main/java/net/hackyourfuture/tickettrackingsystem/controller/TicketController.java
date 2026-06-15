@@ -67,6 +67,6 @@ public class TicketController {
     @DeleteMapping("/{id}/assignees/{userId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void removeAssignee(@PathVariable long id, @PathVariable long userId) {
-        service.addAssignee(id, userId);
+        service.removeAssignee(id, userId);
     }
 }

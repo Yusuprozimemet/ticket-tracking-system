@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
-import jakarta.validation.Valid;
 import net.hackyourfuture.tickettrackingsystem.dto.requests.TicketRequest;
 import net.hackyourfuture.tickettrackingsystem.dto.responses.TicketResponse;
 import net.hackyourfuture.tickettrackingsystem.model.Status;
@@ -36,5 +35,9 @@ public class TicketService {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'addAssignee'");
     }
-    
+
+    public void removeAssignee(long id, long userId) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'removeAssignee'");
+    }
 }
