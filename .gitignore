@@ -39,5 +39,3 @@ Thumbs.db
 
 ### Secrets ###
 .env
-
-src/main/resources/insert.sql
