@@ -113,9 +113,9 @@ Validation errors (`400`) return a map of `field → message`; other errors retu
 
 | Document | Contents |
 | --- | --- |
-| [docs/API design document.md](docs/API%20design%20document.md) | Endpoint summary, full request/response shapes, validation rules, email behavior |
+| [docs/API_design_document.md](docs/API_design_document.md) | Endpoint summary, full request/response shapes, validation rules, email behavior |
 | [docs/ER_Diagram.md](docs/ER_Diagram.md) | Database schema — tables, columns, keys, relationships |
-| [docs/HTTP status codes.md](docs/HTTP%20status%20codes.md) | Status codes returned per endpoint and per error |
+| [docs/HTTP_status_codes.md](docs/HTTP_status_codes.md) | Status codes returned per endpoint and per error |
 
 Interactive, always-up-to-date docs are also available via Swagger UI while the app is
 running (see [API documentation](#api-documentation-swagger) above).
