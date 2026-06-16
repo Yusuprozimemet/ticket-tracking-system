@@ -18,6 +18,7 @@ public class UserRepository {
         this.jdbcTemplate = jdbcTemplate;
     }
 
+    // Insert a new user and return it (with its new id).
     public UserResponse createUser(UserRequest requestBody) {
         String sql = """
                 INSERT INTO users (name, email)
@@ -35,6 +36,7 @@ public class UserRepository {
         }, requestBody.getName(), requestBody.getEmail());
     }
 
+    // Update a user and return it. Empty if no user has that id.
     public Optional<UserResponse> updateUser(long userId, UserRequest requestBody) {
         String sql = """
                 UPDATE users
@@ -55,6 +57,7 @@ public class UserRepository {
         }, requestBody.getName(), requestBody.getEmail(), userId);
     }
 
+    // Delete a user by id.
     public void removeUser(long userId) {
         String sql = """
                 DELETE FROM users
@@ -63,6 +66,7 @@ public class UserRepository {
         jdbcTemplate.update(sql, userId);
     }
 
+    // Return all users.
     public List<UserResponse> fetchAllUsers() {
         String sql = """
                 SELECT user_id, name, email
@@ -77,6 +81,7 @@ public class UserRepository {
                 .build());
     }
 
+    // Find one user by id. Empty if it does not exist.
     public Optional<UserResponse> fetchUserById(long userId) {
         String sql = """
                 SELECT user_id, name, email

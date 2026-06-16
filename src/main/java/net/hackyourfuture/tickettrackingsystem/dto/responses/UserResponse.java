@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+// Outgoing user sent back to the client.
 @Data
 @Builder
 @NoArgsConstructor

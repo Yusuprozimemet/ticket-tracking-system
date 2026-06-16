@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+// A ticket as stored in the database.
 @Data
 @Builder
 @AllArgsConstructor

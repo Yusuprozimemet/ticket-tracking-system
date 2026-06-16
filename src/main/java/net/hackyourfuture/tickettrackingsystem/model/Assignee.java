@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+// A link between a ticket and a user assigned to it.
 @Data
 @Builder
 @AllArgsConstructor

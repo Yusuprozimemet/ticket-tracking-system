@@ -21,6 +21,7 @@ public class ProjectController {
         this.service = service;
     }
 
+    // GET /api/projects - list all projects with their ticket counts.
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
     public List<ProjectSummary> getAllProjects() {

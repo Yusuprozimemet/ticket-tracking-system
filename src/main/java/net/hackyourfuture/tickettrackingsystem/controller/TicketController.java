@@ -32,24 +32,28 @@ public class TicketController {
         this.service = service;
     }
 
+    // POST /api/tickets - create a new ticket.
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public TicketResponse createTicket(@Valid @RequestBody TicketRequest requestBody) {
         return service.createTicket(requestBody);
     }
 
+    // PUT /api/tickets/{id} - update an existing ticket.
     @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     public TicketResponse updateTicket(@PathVariable long id, @Valid @RequestBody TicketRequest requestBody) {
         return service.updateTicket(id, requestBody);
     }
 
+    // GET /api/tickets/{id} - get one ticket by id.
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     public TicketResponse getTicketById(@PathVariable long id) {
         return service.getTicketById(id);
     }
 
+    // GET /api/tickets?search=...&status=... - search/filter tickets.
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
     public List<TicketResponse> searchTickets(
@@ -58,12 +62,14 @@ public class TicketController {
         return service.searchTickets(search, status);
     }
 
+    // POST /api/tickets/{id}/assignees - assign a user to a ticket.
     @PostMapping("/{id}/assignees")
     @ResponseStatus(HttpStatus.OK)
     public TicketResponse addAssignee(@PathVariable long id, @Valid @RequestBody AssigneeRequest requestBody) {
         return service.addAssignee(id, requestBody.getUserId());
     }
 
+    // DELETE /api/tickets/{id}/assignees/{userId} - remove a user from a ticket.
     @DeleteMapping("/{id}/assignees/{userId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void removeAssignee(@PathVariable long id, @PathVariable long userId) {

@@ -9,6 +9,7 @@ import org.springframework.web.client.RestClient;
 @Configuration
 public class RestClientConfig {
 
+    // Build the HTTP client used to talk to Resend, with the API key attached.
     @Bean
     public RestClient resendRestClient(@Value("${resend.api-key:}") String apiKey) {
         return RestClient.builder()

@@ -19,6 +19,7 @@ public class UserService {
         this.repository = repository;
     }
 
+    // Create a new user. Fails with 409 if the email is already taken.
     public UserResponse createUser(UserRequest requestBody){
         try {
             return repository.createUser(requestBody);
@@ -27,6 +28,7 @@ public class UserService {
         }
     }
 
+    // Update an existing user (404 if not found, 409 if the email is taken).
     public UserResponse updateUser(long userId, UserRequest requestBody){
         try {
             return repository.updateUser(userId, requestBody)
@@ -36,6 +38,7 @@ public class UserService {
         }
     }
 
+    // Delete a user by id (404 if not found).
     public void deleteUser(long userId){
         repository.fetchUserById(userId)
                 .orElseThrow(() -> new UserNotFoundException("Could not find a user with id " + userId + "."));
@@ -43,10 +46,12 @@ public class UserService {
         repository.removeUser(userId);
     }
 
+    // List all users.
     public List<UserResponse> getAllUsers(){
         return repository.fetchAllUsers();
     }
 
+    // Get one user by id (404 if not found).
     public UserResponse getUserById(long userId){
         return repository.fetchUserById(userId)
                 .orElseThrow(() -> new UserNotFoundException("Could not find a user with id " + userId + "."));
