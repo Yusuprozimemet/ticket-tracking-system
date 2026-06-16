@@ -2,7 +2,7 @@ package net.hackyourfuture.tickettrackingsystem.repository;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -107,8 +107,8 @@ public class TicketRepository {
                 .title(rs.getString("title"))
                 .description(rs.getString("description"))
                 .status(Status.valueOf(rs.getString("status")))
-                .createdAt(rs.getObject("created_at", LocalDateTime.class))
-                .updatedAt(rs.getObject("updated_at", LocalDateTime.class))
+                .createdAt(rs.getObject("created_at", Instant.class))
+                .updatedAt(rs.getObject("updated_at", Instant.class))
                 .build();
     }
 }

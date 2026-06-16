@@ -1,5 +1,5 @@
 package net.hackyourfuture.tickettrackingsystem.model;
-import java.time.LocalDateTime;
+import java.time.Instant;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -16,8 +16,8 @@ public class Ticket {
     private String title;
     private String description;
     private Status status;
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
+    private Instant createdAt;
+    private Instant updatedAt;
 }
     
 
