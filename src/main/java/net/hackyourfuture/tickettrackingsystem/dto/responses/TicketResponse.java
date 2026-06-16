@@ -1,6 +1,6 @@
 package net.hackyourfuture.tickettrackingsystem.dto.responses;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 import net.hackyourfuture.tickettrackingsystem.model.Status;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -18,7 +18,7 @@ public class TicketResponse {
     private String title;
     private String description;
     private Status status;
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
+    private Instant createdAt;
+    private Instant updatedAt;
     
 }
