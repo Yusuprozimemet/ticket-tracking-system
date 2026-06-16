@@ -11,8 +11,8 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import net.hackyourfuture.tickettrackingsystem.dto.requests.TicketRequest;
-import net.hackyourfuture.tickettrackingsystem.dto.responses.TicketResponse;
 import net.hackyourfuture.tickettrackingsystem.model.Status;
+import net.hackyourfuture.tickettrackingsystem.model.Ticket;
 
 @Repository
 public class TicketRepository {
@@ -24,7 +24,7 @@ public class TicketRepository {
     }
 
     // Insert a new ticket and return it (with its new id and created_at).
-    public TicketResponse createTicket(TicketRequest request) {
+    public Ticket createTicket(TicketRequest request) {
         String sql = """
                 INSERT INTO tickets (project_id, title, description, status)
                 VALUES (?, ?, ?, ?)
@@ -38,7 +38,7 @@ public class TicketRepository {
     }
 
     // Update a ticket and return it. Empty if no ticket has that id.
-    public Optional<TicketResponse> updateTicket(long ticketId, TicketRequest request) {
+    public Optional<Ticket> updateTicket(long ticketId, TicketRequest request) {
         String sql = """
                 UPDATE tickets
                 SET title = ?, description = ?, project_id = ?, status = ?, updated_at = NOW()
@@ -56,7 +56,7 @@ public class TicketRepository {
     }
 
     // Find one ticket by id. Empty if it does not exist.
-    public Optional<TicketResponse> fetchTicketById(long ticketId) {
+    public Optional<Ticket> fetchTicketById(long ticketId) {
         String sql = """
                 SELECT ticket_id, project_id, title, description, status, created_at, updated_at
                 FROM tickets
@@ -72,7 +72,7 @@ public class TicketRepository {
     }
 
     // Search tickets ([] if none match). 'search' filters title/description; 'status' is optional.
-    public List<TicketResponse> searchTickets(String search, Status status) {
+    public List<Ticket> searchTickets(String search, Status status) {
         StringBuilder sql = new StringBuilder("""
                 SELECT ticket_id, project_id, title, description, status, created_at, updated_at
                 FROM tickets
@@ -101,9 +101,9 @@ public class TicketRepository {
         return Boolean.TRUE.equals(jdbcTemplate.queryForObject(sql, Boolean.class, ticketId));
     }
 
-    // Build a TicketResponse from one database row.
-    private TicketResponse mapTicket(ResultSet rs) throws SQLException {
-        return TicketResponse.builder()
+    // Build a Ticket model from one database row.
+    private Ticket mapTicket(ResultSet rs) throws SQLException {
+        return Ticket.builder()
                 .id(rs.getLong("ticket_id"))
                 .projectId(rs.getLong("project_id"))
                 .title(rs.getString("title"))

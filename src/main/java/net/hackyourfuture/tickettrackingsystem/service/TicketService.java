@@ -6,6 +6,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import net.hackyourfuture.tickettrackingsystem.dto.requests.TicketRequest;
 import net.hackyourfuture.tickettrackingsystem.dto.responses.TicketResponse;
@@ -16,6 +17,8 @@ import net.hackyourfuture.tickettrackingsystem.exception.ProjectNotFoundExceptio
 import net.hackyourfuture.tickettrackingsystem.exception.TicketNotFoundException;
 import net.hackyourfuture.tickettrackingsystem.exception.UserNotFoundException;
 import net.hackyourfuture.tickettrackingsystem.model.Status;
+import net.hackyourfuture.tickettrackingsystem.model.Ticket;
+import net.hackyourfuture.tickettrackingsystem.model.User;
 import net.hackyourfuture.tickettrackingsystem.repository.AssigneeRepository;
 import net.hackyourfuture.tickettrackingsystem.repository.ProjectRepository;
 import net.hackyourfuture.tickettrackingsystem.repository.TicketRepository;
@@ -42,44 +45,47 @@ public class TicketService {
     }
 
     // Create a new ticket. No email is sent on creation.
+    @Transactional
     public TicketResponse createTicket(TicketRequest requestBody) {
         checkProjectExists(requestBody.getProjectId());
 
-        TicketResponse ticket = ticketRepository.createTicket(requestBody);
+        Ticket ticket = ticketRepository.createTicket(requestBody);
         // No email on creation (per the design doc).
-        return withAssignees(ticket);
+        return toResponse(ticket);
     }
 
     // Update an existing ticket, then email its assignees.
+    @Transactional
     public TicketResponse updateTicket(long id, TicketRequest requestBody) {
         checkProjectExists(requestBody.getProjectId());
 
-        TicketResponse ticket = ticketRepository.updateTicket(id, requestBody)
+        Ticket ticket = ticketRepository.updateTicket(id, requestBody)
                 .orElseThrow(() -> new TicketNotFoundException("Could not find a ticket with id " + id + "."));
 
-        withAssignees(ticket);
-        notifyAssignees(ticket, "updated");
-        return ticket;
+        TicketResponse response = toResponse(ticket);
+        notifyAssignees(response, "updated");
+        return response;
     }
 
     // Get one ticket by its id (404 if it does not exist).
     public TicketResponse getTicketById(long id) {
-        TicketResponse ticket = ticketRepository.fetchTicketById(id)
+        Ticket ticket = ticketRepository.fetchTicketById(id)
                 .orElseThrow(() -> new TicketNotFoundException("Could not find a ticket with id " + id + "."));
 
-        return withAssignees(ticket);
+        return toResponse(ticket);
     }
 
     // Search/filter tickets. Returns an empty list if none match.
     public List<TicketResponse> searchTickets(String search, Status status) {
-        List<TicketResponse> tickets = ticketRepository.searchTickets(search, status);
-        for (TicketResponse ticket : tickets) {
-            withAssignees(ticket);
+        List<TicketResponse> responses = new ArrayList<>();
+        for (Ticket ticket : ticketRepository.searchTickets(search, status)) {
+            responses.add(toResponse(ticket));
         }
-        return tickets;
+        return responses;
     }
 
     // Assign a user to a ticket, then email the assignees.
+    @Transactional
     public TicketResponse addAssignee(long id, Long userId) {
         if (!ticketRepository.existsById(id)) {
             throw new TicketNotFoundException("Could not find a ticket with id " + id + ".");
@@ -94,14 +100,15 @@ public class TicketService {
 
         assigneeRepository.addAssignee(id, userId);
 
-        TicketResponse ticket = ticketRepository.fetchTicketById(id)
+        Ticket ticket = ticketRepository.fetchTicketById(id)
                 .orElseThrow(() -> new TicketNotFoundException("Could not find a ticket with id " + id + "."));
-        withAssignees(ticket);
-        notifyAssignees(ticket, "assignee added");
-        return ticket;
+        TicketResponse response = toResponse(ticket);
+        notifyAssignees(response, "assignee added");
+        return response;
     }
 
     // Remove a user from a ticket, then email the remaining assignees.
+    @Transactional
     public void removeAssignee(long id, long userId) {
         if (!ticketRepository.existsById(id)) {
             throw new TicketNotFoundException("Could not find a ticket with id " + id + ".");
@@ -113,10 +120,9 @@ public class TicketService {
                     "User " + userId + " is not assigned to ticket " + id + ".");
         }
 
-        TicketResponse ticket = ticketRepository.fetchTicketById(id)
+        Ticket ticket = ticketRepository.fetchTicketById(id)
                 .orElseThrow(() -> new TicketNotFoundException("Could not find a ticket with id " + id + "."));
-        withAssignees(ticket);
-        notifyAssignees(ticket, "assignee removed");
+        notifyAssignees(toResponse(ticket), "assignee removed");
     }
 
     // --- small helpers -----------------------------------------------------
@@ -128,10 +134,18 @@ public class TicketService {
         }
     }
 
-    // Fill in the ticket's assignee ids so the response matches the API design.
-    private TicketResponse withAssignees(TicketResponse ticket) {
-        ticket.setAssignees(assigneeRepository.fetchAssigneeIds(ticket.getId()));
-        return ticket;
+    // Map the ticket model to the API response, attaching its assignee ids.
+    private TicketResponse toResponse(Ticket ticket) {
+        return TicketResponse.builder()
+                .id(ticket.getId())
+                .projectId(ticket.getProjectId())
+                .title(ticket.getTitle())
+                .description(ticket.getDescription())
+                .status(ticket.getStatus())
+                .createdAt(ticket.getCreatedAt())
+                .updatedAt(ticket.getUpdatedAt())
+                .assignees(assigneeRepository.fetchAssigneeIds(ticket.getId()))
+                .build();
     }
 
     // Email the ticket's current assignees. Failures are logged, never fatal.
@@ -152,8 +166,19 @@ public class TicketService {
     private List<UserResponse> getRecipients(long ticketId) {
         List<UserResponse> recipients = new ArrayList<>();
         for (Long userId : assigneeRepository.fetchAssigneeIds(ticketId)) {
-            userRepository.fetchUserById(userId).ifPresent(recipients::add);
+            userRepository.fetchUserById(userId)
+                    .map(this::toUserResponse)
+                    .ifPresent(recipients::add);
         }
         return recipients;
+    }
+
+    // Map a user model to the API response shape (used for email recipients).
+    private UserResponse toUserResponse(User user) {
+        return UserResponse.builder()
+                .id(user.getId())
+                .name(user.getName())
+                .email(user.getEmail())
+                .build();
     }
 }
