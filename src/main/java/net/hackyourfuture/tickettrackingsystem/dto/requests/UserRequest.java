@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+// Incoming body for creating or updating a user.
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

@@ -16,6 +16,7 @@ public class ProjectService {
         this.repository = repository;
     }
 
+    // List all projects with their per-status ticket counts.
     public List<ProjectSummary> getAllProjectSummaries() {
         return repository.fetchAllProjectSummaries();
     }

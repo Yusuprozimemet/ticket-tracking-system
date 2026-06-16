@@ -51,7 +51,7 @@ Delete a user
 | Method | DELETE |
 | Request body | none |
 | Response body | none |
-| Validations | User {id} must exist |
+| Validations | User {id} must exist. Deleting a user cascades to remove that user's ticket assignments (ON DELETE CASCADE). |
 
 ### GET /api/users
 List all users
@@ -60,7 +60,7 @@ List all users
 | --- | --- |
 | Method | GET |
 | Request body | none |
-| Response body | List of {id, name, email} |
+| Response body | List of {   "id": "integer",   "name": "string",   "email": "string"  } |
 | Validations | none |
 
 ### GET /api/users/{id}
@@ -80,7 +80,7 @@ List all projects (with per-status counts)
 | --- | --- |
 | Method | GET |
 | Request body | none |
-| Response body | List of { id, name, ticketCounts: { open, in progress, closed } } |
+| Response body | List of {   "projectId": "integer",   "name": "string",   "openCount": "integer",   "inProgressCount": "integer",   "closedCount": "integer"  } |
 | Validations | none |
 
 ### POST /api/tickets
@@ -90,7 +90,7 @@ Create a new ticket
 | --- | --- |
 | Method | POST |
 | Request body | title, description(optional), projectId, status |
-| Response body | id, title, description, projectId, status, createdAt, updatedAt(null), assignees([]) |
+| Response body | {   "id": "integer",   "projectId": "integer",   "title": "string",   "description": "string",   "status": "string",   "createdAt": "string",   "updatedAt": "string",   "assignees": ["integer"]  } (updatedAt null on create) |
 | Validations | 1. title required 2. status must be open | in progress | closed 3. projectId must exist |
 
 ### PUT /api/tickets/{id}
@@ -100,7 +100,7 @@ Update a ticket
 | --- | --- |
 | Method | PUT |
 | Request body | title, description, projectId, status (full ticket; id in the URL) |
-| Response body | Full updated ticket (updatedAt now set) |
+| Response body | {   "id": "integer",   "projectId": "integer",   "title": "string",   "description": "string",   "status": "string",   "createdAt": "string",   "updatedAt": "string",   "assignees": ["integer"]  } (updatedAt now set) |
 | Validations | 1. same rules as create 2. ticket {id} must exist 3. projectId must exist |
 
 ### POST /api/tickets/{id}/assignees
@@ -110,7 +110,7 @@ Add an assignee
 | --- | --- |
 | Method | POST |
 | Request body | userId (ticket id is in the URL) |
-| Response body | Ticket with updated assignee list |
+| Response body | {   "id": "integer",   "projectId": "integer",   "title": "string",   "description": "string",   "status": "string",   "createdAt": "string",   "updatedAt": "string",   "assignees": ["integer"]  } (with updated assignee list) |
 | Validations | 1. ticket must exist 2. user must exist 3. user not already assigned |
 
 ### DELETE /api/tickets/{id}/assignees/{userId}
@@ -130,7 +130,7 @@ Get a single ticket
 | --- | --- |
 | Method | GET |
 | Request body | None (id is in the URL) |
-| Response body | Full ticket – id, title, description, projectId, status, createdAt, updatedAt, assignees |
+| Response body | {   "id": "integer",   "projectId": "integer",   "title": "string",   "description": "string",   "status": "string",   "createdAt": "string",   "updatedAt": "string",   "assignees": ["integer"]  } |
 | Validations | Ticket {id} must exist |
 
 ### GET /api/tickets?search=...&status=...
@@ -140,7 +140,7 @@ Search tickets
 | --- | --- |
 | Method | GET |
 | Request body | none |
-| Response body | List of tickets ([] if none match) |
+| Response body | List of {   "id": "integer",   "projectId": "integer",   "title": "string",   "description": "string",   "status": "string",   "createdAt": "string",   "updatedAt": "string",   "assignees": ["integer"]  } ([] if none match) |
 | Validations | 1. If status given, it must be a valid value 2. no filters → return all tickets |
 
 # 4. Email notifications

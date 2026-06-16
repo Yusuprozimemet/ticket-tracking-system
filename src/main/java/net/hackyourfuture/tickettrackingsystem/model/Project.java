@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+// A project that tickets belong to.
 @Data
 @Builder
 @AllArgsConstructor

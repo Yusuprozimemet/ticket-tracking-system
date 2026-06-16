@@ -26,6 +26,7 @@ public class EmailService {
         this.from = from;
     }
 
+    // Send a "ticket changed" email to each recipient.
     public void sendTicketChanged(TicketResponse ticket, String action, List<UserResponse> recipients) {
         String subject = "Ticket #" + ticket.getId() + " " + action + ": " + ticket.getTitle();
         String html = buildHtml(ticket, action, recipients);
@@ -36,6 +37,7 @@ public class EmailService {
         }
     }
 
+    // Fill the email HTML template with the ticket's details.
     private String buildHtml(TicketResponse ticket, String action, List<UserResponse> recipients) {
         String assigneeNames = recipients.stream()
                 .map(UserResponse::getName)
@@ -50,6 +52,7 @@ public class EmailService {
                 .replace("{{assignees}}", assigneeNames);
     }
 
+    // Read the email HTML template from the classpath.
     private String loadTemplate() {
         try {
             return StreamUtils.copyToString(

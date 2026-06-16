@@ -39,6 +39,7 @@ public class ProjectRepository {
                 .build());
     }
 
+    // True if a project with this id exists.
     public boolean existsById(long projectId) {
         String sql = "SELECT EXISTS(SELECT 1 FROM projects WHERE project_id = ?)";
         return Boolean.TRUE.equals(jdbcTemplate.queryForObject(sql, Boolean.class, projectId));

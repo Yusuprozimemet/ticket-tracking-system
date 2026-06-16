@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 
+// Incoming body for adding an assignee: which user to assign.
 @Data
 @AllArgsConstructor
 @NoArgsConstructor

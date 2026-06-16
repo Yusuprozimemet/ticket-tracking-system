@@ -14,6 +14,7 @@ public class AssigneeRepository {
         this.jdbcTemplate = jdbcTemplate;
     }
 
+    // Return the user ids assigned to a ticket.
     public List<Long> fetchAssigneeIds(long ticketId) {
         String sql = """
                 SELECT user_id
@@ -24,6 +25,7 @@ public class AssigneeRepository {
         return jdbcTemplate.queryForList(sql, Long.class, ticketId);
     }
 
+    // True if this user is already assigned to this ticket.
     public boolean existsAssignment(long ticketId, long userId) {
         String sql = """
                 SELECT EXISTS(
@@ -34,6 +36,7 @@ public class AssigneeRepository {
         return Boolean.TRUE.equals(jdbcTemplate.queryForObject(sql, Boolean.class, ticketId, userId));
     }
 
+    // Link a user to a ticket.
     public void addAssignee(long ticketId, long userId) {
         String sql = "INSERT INTO ticket_assignees (ticket_id, user_id) VALUES (?, ?)";
         jdbcTemplate.update(sql, ticketId, userId);

@@ -23,7 +23,7 @@ public class TicketRepository {
         this.jdbcTemplate = jdbcTemplate;
     }
 
-    // id, title, description, projectId, status, createdAt, updatedAt(null), assignees([])
+    // Insert a new ticket and return it (with its new id and created_at).
     public TicketResponse createTicket(TicketRequest request) {
         String sql = """
                 INSERT INTO tickets (project_id, title, description, status)
@@ -37,7 +37,7 @@ public class TicketRepository {
         }, request.getProjectId(), request.getTitle(), request.getDescription(), request.getStatus().name());
     }
 
-    // Full updated ticket (updatedAt now set)
+    // Update a ticket and return it. Empty if no ticket has that id.
     public Optional<TicketResponse> updateTicket(long ticketId, TicketRequest request) {
         String sql = """
                 UPDATE tickets
@@ -55,7 +55,7 @@ public class TicketRepository {
                 request.getStatus().name(), ticketId);
     }
 
-    // Full ticket – id, title, description, projectId, status, createdAt, updatedAt
+    // Find one ticket by id. Empty if it does not exist.
     public Optional<TicketResponse> fetchTicketById(long ticketId) {
         String sql = """
                 SELECT ticket_id, project_id, title, description, status, created_at, updated_at
@@ -71,7 +71,7 @@ public class TicketRepository {
         }, ticketId);
     }
 
-    // List of tickets ([] if none match). search filters title/description; status is optional.
+    // Search tickets ([] if none match). 'search' filters title/description; 'status' is optional.
     public List<TicketResponse> searchTickets(String search, Status status) {
         StringBuilder sql = new StringBuilder("""
                 SELECT ticket_id, project_id, title, description, status, created_at, updated_at
@@ -95,11 +95,13 @@ public class TicketRepository {
         return jdbcTemplate.query(sql.toString(), (rs, rowNum) -> mapTicket(rs), params.toArray());
     }
 
+    // True if a ticket with this id exists.
     public boolean existsById(long ticketId) {
         String sql = "SELECT EXISTS(SELECT 1 FROM tickets WHERE ticket_id = ?)";
         return Boolean.TRUE.equals(jdbcTemplate.queryForObject(sql, Boolean.class, ticketId));
     }
 
+    // Build a TicketResponse from one database row.
     private TicketResponse mapTicket(ResultSet rs) throws SQLException {
         return TicketResponse.builder()
                 .id(rs.getLong("ticket_id"))

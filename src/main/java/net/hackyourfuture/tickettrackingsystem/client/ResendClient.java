@@ -16,6 +16,7 @@ public class ResendClient {
         this.resendRestClient = resendRestClient;
     }
 
+    // Send one email by calling Resend's POST /emails endpoint.
     public void sendEmail(ResendEmailRequest request) {
         resendRestClient
                 .post()
