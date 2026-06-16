@@ -5,13 +5,15 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-// A user as stored in the database.
+// Domain model of a user row in the database (persistence shape).
+// Services map this to UserResponse (the API shape) before returning it.
 @Data
 @Builder
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 public class User {
-    private long id;
+
+    private Long id;
     private String name;
     private String email;
 }
