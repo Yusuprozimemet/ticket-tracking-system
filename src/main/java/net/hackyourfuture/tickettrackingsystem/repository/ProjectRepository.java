@@ -16,7 +16,7 @@ public class ProjectRepository {
         this.jdbcTemplate = jdbcTemplate;
     }
 
-    // List of { id, name, ticketCounts: { open, in progress, closed } }
+    // List of { projectId, name, openCount, inProgressCount, closedCount } - one row per project.
     public List<ProjectSummary> fetchAllProjectSummaries() {
         String sql = """
                 SELECT projects.project_id,
