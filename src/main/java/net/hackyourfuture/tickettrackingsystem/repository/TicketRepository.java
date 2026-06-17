@@ -4,7 +4,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.Instant;
 import java.time.OffsetDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -73,27 +72,46 @@ public class TicketRepository {
     }
 
     // Search tickets ([] if none match). 'search' filters title/description; 'status' is optional.
+    // One fixed query per filter combination 
     public List<Ticket> searchTickets(String search, Status status) {
-        StringBuilder sql = new StringBuilder("""
+        boolean hasSearch = search != null && !search.isBlank();
+        boolean hasStatus = status != null;
+        String like = "%" + search + "%";
+
+        if (hasSearch && hasStatus) {
+            String sql = """
+                    SELECT ticket_id, project_id, title, description, status, created_at, updated_at
+                    FROM tickets
+                    WHERE (LOWER(title) LIKE LOWER(?) OR LOWER(description) LIKE LOWER(?))
+                      AND status = ?
+                    ORDER BY ticket_id
+                    """;
+            return jdbcTemplate.query(sql, (rs, rowNum) -> mapTicket(rs), like, like, status.name());
+        }
+        if (hasSearch) {
+            String sql = """
+                    SELECT ticket_id, project_id, title, description, status, created_at, updated_at
+                    FROM tickets
+                    WHERE LOWER(title) LIKE LOWER(?) OR LOWER(description) LIKE LOWER(?)
+                    ORDER BY ticket_id
+                    """;
+            return jdbcTemplate.query(sql, (rs, rowNum) -> mapTicket(rs), like, like);
+        }
+        if (hasStatus) {
+            String sql = """
+                    SELECT ticket_id, project_id, title, description, status, created_at, updated_at
+                    FROM tickets
+                    WHERE status = ?
+                    ORDER BY ticket_id
+                    """;
+            return jdbcTemplate.query(sql, (rs, rowNum) -> mapTicket(rs), status.name());
+        }
+        String sql = """
                 SELECT ticket_id, project_id, title, description, status, created_at, updated_at
                 FROM tickets
-                WHERE 1 = 1
-                """);
-        List<Object> params = new ArrayList<>();
-
-        if (search != null && !search.isBlank()) {
-            sql.append(" AND (title ILIKE ? OR description ILIKE ?)");
-            String like = "%" + search + "%";
-            params.add(like);
-            params.add(like);
-        }
-        if (status != null) {
-            sql.append(" AND status = ?");
-            params.add(status.name());
-        }
-        sql.append(" ORDER BY ticket_id");
-
-        return jdbcTemplate.query(sql.toString(), (rs, rowNum) -> mapTicket(rs), params.toArray());
+                ORDER BY ticket_id
+                """;
+        return jdbcTemplate.query(sql, (rs, rowNum) -> mapTicket(rs));
     }
 
     // True if a ticket with this id exists.
