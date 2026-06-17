@@ -70,7 +70,7 @@ Get a single user
 | --- | --- |
 | Method | GET |
 | Request body | none |
-| Response body | id, name, email |
+| Response body | { "id": "integer", "name": "string", "email": "string" } |
 | Validations | User {id} must exist |
 
 ### GET /api/projects
@@ -144,10 +144,10 @@ Search tickets
 | Validations | 1. If status given, it must be a valid value 2. no filters → return all tickets |
 
 # 4. Email notifications
-**When**→ Every time a ticket changes: on PUT (title/description/status/project), on add-assignee, and on remove-assignee. Not on ticket creation.
+**When** → On PUT, add-assignee, and remove-assignee. Not on create.
 
-**Who** → The ticket's assignees after the change is applied. Removed users do not get it; newly added ones do. If there are zero assignees, send nothing.
+**Who** → The assignees after the change. No assignees, no email.
 
-**What** → To which ticket, what happened, what is the title and status, and the assignee names.
+**What** → Ticket id, what changed, title, status, assignee names.
 
-**What happens if sending fails** → Save the ticket first and return success, then send mail inside a try/catch. Never rethrow — log error with the ticket id and recipient so the failure is traceable. Credentials come from env variables.
+**If sending fails** → Save first, return success. Send in a try/catch, log the error, never rethrow. Credentials come from env vars.

@@ -13,16 +13,6 @@ tickets, and get email notifications whenever a ticket changes.
 - **Email notifications** — assignees are notified via [Resend](https://resend.com) whenever a
   ticket changes (update, add/remove assignee). Sending failures are logged, never fatal.
 
-## Tech stack
-
-- Java 25, Spring Boot 4.1
-- Spring MVC (`@RestController`) on embedded Tomcat
-- Spring JDBC (`JdbcTemplate`) over PostgreSQL
-- Bean Validation for request DTOs
-- springdoc-openapi (Swagger UI + OpenAPI 3 docs)
-- Lombok
-- JUnit 5 for tests
-- GitHub Actions CI (build + test against a Postgres service)
 
 ## Getting started
 
@@ -67,7 +57,7 @@ Interactive API docs are generated automatically by springdoc-openapi:
 | URL | Description |
 | --- | --- |
 | `http://localhost:8080/swagger-ui.html` | Interactive Swagger UI |
-| `http://localhost:8080/v3/api-docs` | Raw OpenAPI 3 spec (JSON) |
+
 
 ### Test
 
@@ -95,27 +85,12 @@ Interactive API docs are generated automatically by springdoc-openapi:
 All requests and responses are JSON. Request bodies are validated; invalid input is
 rejected before anything is saved.
 
-### Status codes
-
-| Code | When |
-| --- | --- |
-| `200 OK` | Successful read, update, or add-assignee |
-| `201 Created` | User or ticket created |
-| `204 No Content` | User deleted, or assignee removed |
-| `400 Bad Request` | Request body fails validation (e.g. blank title, name < 3 chars, invalid email) |
-| `404 Not Found` | Referenced user, ticket, project, or assignment does not exist |
-| `409 Conflict` | Email already in use, or user already assigned to the ticket |
-
-Validation errors (`400`) return a map of `field → message`; other errors return
-`{ "error": "<message>" }`.
 
 ## Documentation
 
 | Document | Contents |
 | --- | --- |
-| [docs/API_design_document.md](docs/API_design_document.md) | Endpoint summary, full request/response shapes, validation rules, email behavior |
-| [docs/ER_Diagram.md](docs/ER_Diagram.md) | Database schema — tables, columns, keys, relationships |
-| [docs/HTTP_status_codes.md](docs/HTTP_status_codes.md) | Status codes returned per endpoint and per error |
+| [docs/API_design_document.md](docs/API_design_document.pdf) | Endpoint summary, full request/response shapes, validation rules, email behavior |
 
 Interactive, always-up-to-date docs are also available via Swagger UI while the app is
 running (see [API documentation](#api-documentation-swagger) above).
