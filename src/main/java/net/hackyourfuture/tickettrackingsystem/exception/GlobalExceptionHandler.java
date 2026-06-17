@@ -12,21 +12,13 @@ import java.util.Map;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler({
-            UserNotFoundException.class,
-            ProjectNotFoundException.class,
-            TicketNotFoundException.class,
-            AssignmentNotFoundException.class
-    })
+    @ExceptionHandler(NotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public Map<String, String> handleNotFound(RuntimeException ex){
         return Map.of("error", ex.getMessage());
     }
 
-    @ExceptionHandler({
-            DuplicateEmailException.class,
-            AssignmentAlreadyExistsException.class
-    })
+    @ExceptionHandler(ConflictException.class)
     @ResponseStatus(HttpStatus.CONFLICT)
     public Map<String, String> handleConflict(RuntimeException ex){
         return Map.of("error", ex.getMessage());

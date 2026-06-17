@@ -2,8 +2,8 @@ package net.hackyourfuture.tickettrackingsystem.service;
 
 import net.hackyourfuture.tickettrackingsystem.dto.requests.UserRequest;
 import net.hackyourfuture.tickettrackingsystem.dto.responses.UserResponse;
-import net.hackyourfuture.tickettrackingsystem.exception.DuplicateEmailException;
-import net.hackyourfuture.tickettrackingsystem.exception.UserNotFoundException;
+import net.hackyourfuture.tickettrackingsystem.exception.ConflictException;
+import net.hackyourfuture.tickettrackingsystem.exception.NotFoundException;
 import net.hackyourfuture.tickettrackingsystem.model.User;
 import net.hackyourfuture.tickettrackingsystem.repository.UserRepository;
 import org.springframework.dao.DuplicateKeyException;
@@ -27,7 +27,7 @@ public class UserService {
         try {
             return toResponse(repository.createUser(requestBody));
         } catch (DuplicateKeyException e) {
-            throw new DuplicateEmailException("An account with this email already exists: " + requestBody.getEmail());
+            throw new ConflictException("An account with this email already exists: " + requestBody.getEmail());
         }
     }
 
@@ -37,9 +37,9 @@ public class UserService {
         try {
             return repository.updateUser(userId, requestBody)
                     .map(this::toResponse)
-                    .orElseThrow(() -> new UserNotFoundException("Could not find a user with id " + userId + "."));
+                    .orElseThrow(() -> new NotFoundException("Could not find a user with id " + userId + "."));
         } catch (DuplicateKeyException e) {
-            throw new DuplicateEmailException("An account with this email already exists: " + requestBody.getEmail());
+            throw new ConflictException("An account with this email already exists: " + requestBody.getEmail());
         }
     }
 
@@ -47,7 +47,7 @@ public class UserService {
     @Transactional
     public void deleteUser(long userId){
         repository.fetchUserById(userId)
-                .orElseThrow(() -> new UserNotFoundException("Could not find a user with id " + userId + "."));
+                .orElseThrow(() -> new NotFoundException("Could not find a user with id " + userId + "."));
 
         repository.removeUser(userId);
     }
@@ -63,7 +63,7 @@ public class UserService {
     public UserResponse getUserById(long userId){
         return repository.fetchUserById(userId)
                 .map(this::toResponse)
-                .orElseThrow(() -> new UserNotFoundException("Could not find a user with id " + userId + "."));
+                .orElseThrow(() -> new NotFoundException("Could not find a user with id " + userId + "."));
     }
 
     // Map the persistence model to the API response shape.
