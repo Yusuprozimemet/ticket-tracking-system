@@ -11,11 +11,8 @@ import org.springframework.transaction.annotation.Transactional;
 import net.hackyourfuture.tickettrackingsystem.dto.requests.TicketRequest;
 import net.hackyourfuture.tickettrackingsystem.dto.responses.TicketResponse;
 import net.hackyourfuture.tickettrackingsystem.dto.responses.UserResponse;
-import net.hackyourfuture.tickettrackingsystem.exception.AssignmentAlreadyExistsException;
-import net.hackyourfuture.tickettrackingsystem.exception.AssignmentNotFoundException;
-import net.hackyourfuture.tickettrackingsystem.exception.ProjectNotFoundException;
-import net.hackyourfuture.tickettrackingsystem.exception.TicketNotFoundException;
-import net.hackyourfuture.tickettrackingsystem.exception.UserNotFoundException;
+import net.hackyourfuture.tickettrackingsystem.exception.ConflictException;
+import net.hackyourfuture.tickettrackingsystem.exception.NotFoundException;
 import net.hackyourfuture.tickettrackingsystem.model.Status;
 import net.hackyourfuture.tickettrackingsystem.model.Ticket;
 import net.hackyourfuture.tickettrackingsystem.model.User;
@@ -60,7 +57,7 @@ public class TicketService {
         checkProjectExists(requestBody.getProjectId());
 
         Ticket ticket = ticketRepository.updateTicket(id, requestBody)
-                .orElseThrow(() -> new TicketNotFoundException("Could not find a ticket with id " + id + "."));
+                .orElseThrow(() -> new NotFoundException("Could not find a ticket with id " + id + "."));
 
         TicketResponse response = toResponse(ticket);
         notifyAssignees(response, "updated");
@@ -70,7 +67,7 @@ public class TicketService {
     // Get one ticket by its id (404 if it does not exist).
     public TicketResponse getTicketById(long id) {
         Ticket ticket = ticketRepository.fetchTicketById(id)
-                .orElseThrow(() -> new TicketNotFoundException("Could not find a ticket with id " + id + "."));
+                .orElseThrow(() -> new NotFoundException("Could not find a ticket with id " + id + "."));
 
         return toResponse(ticket);
     }
@@ -88,20 +85,20 @@ public class TicketService {
     @Transactional
     public TicketResponse addAssignee(long id, Long userId) {
         if (!ticketRepository.existsById(id)) {
-            throw new TicketNotFoundException("Could not find a ticket with id " + id + ".");
+            throw new NotFoundException("Could not find a ticket with id " + id + ".");
         }
         if (userRepository.fetchUserById(userId).isEmpty()) {
-            throw new UserNotFoundException("Could not find a user with id " + userId + ".");
+            throw new NotFoundException("Could not find a user with id " + userId + ".");
         }
         if (assigneeRepository.existsAssignment(id, userId)) {
-            throw new AssignmentAlreadyExistsException(
+            throw new ConflictException(
                     "User " + userId + " is already assigned to ticket " + id + ".");
         }
 
         assigneeRepository.addAssignee(id, userId);
 
         Ticket ticket = ticketRepository.fetchTicketById(id)
-                .orElseThrow(() -> new TicketNotFoundException("Could not find a ticket with id " + id + "."));
+                .orElseThrow(() -> new NotFoundException("Could not find a ticket with id " + id + "."));
         TicketResponse response = toResponse(ticket);
         notifyAssignees(response, "assignee added");
         return response;
@@ -111,17 +108,17 @@ public class TicketService {
     @Transactional
     public void removeAssignee(long id, long userId) {
         if (!ticketRepository.existsById(id)) {
-            throw new TicketNotFoundException("Could not find a ticket with id " + id + ".");
+            throw new NotFoundException("Could not find a ticket with id " + id + ".");
         }
 
         int removed = assigneeRepository.removeAssignee(id, userId);
         if (removed == 0) {
-            throw new AssignmentNotFoundException(
+            throw new NotFoundException(
                     "User " + userId + " is not assigned to ticket " + id + ".");
         }
 
         Ticket ticket = ticketRepository.fetchTicketById(id)
-                .orElseThrow(() -> new TicketNotFoundException("Could not find a ticket with id " + id + "."));
+                .orElseThrow(() -> new NotFoundException("Could not find a ticket with id " + id + "."));
         notifyAssignees(toResponse(ticket), "assignee removed");
     }
 
@@ -130,7 +127,7 @@ public class TicketService {
     // Throw a 404 if the given project does not exist.
     private void checkProjectExists(long projectId) {
         if (!projectRepository.existsById(projectId)) {
-            throw new ProjectNotFoundException("Could not find a project with id " + projectId + ".");
+            throw new NotFoundException("Could not find a project with id " + projectId + ".");
         }
     }
 
