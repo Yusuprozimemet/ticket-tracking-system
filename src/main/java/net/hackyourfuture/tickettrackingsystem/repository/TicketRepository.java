@@ -3,6 +3,7 @@ package net.hackyourfuture.tickettrackingsystem.repository;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.Instant;
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -109,8 +110,14 @@ public class TicketRepository {
                 .title(rs.getString("title"))
                 .description(rs.getString("description"))
                 .status(Status.valueOf(rs.getString("status")))
-                .createdAt(rs.getObject("created_at", Instant.class))
-                .updatedAt(rs.getObject("updated_at", Instant.class))
+                .createdAt(toInstant(rs.getObject("created_at", OffsetDateTime.class)))
+                .updatedAt(toInstant(rs.getObject("updated_at", OffsetDateTime.class)))
                 .build();
+    }
+
+    // TIMESTAMPTZ columns map to OffsetDateTime in pgjdbc; convert to Instant (null-safe,
+    // since updated_at is null until a ticket is first updated).
+    private static Instant toInstant(OffsetDateTime value) {
+        return value == null ? null : value.toInstant();
     }
 }
