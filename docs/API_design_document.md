@@ -91,7 +91,7 @@ Create a new ticket
 | Method | POST |
 | Request body | title, description(optional), projectId, status |
 | Response body | {   "id": "integer",   "projectId": "integer",   "title": "string",   "description": "string",   "status": "string",   "createdAt": "string",   "updatedAt": "string",   "assignees": ["integer"]  } (updatedAt null on create) |
-| Validations | 1. title required 2. status must be open | in progress | closed 3. projectId must exist |
+| Validations | 1. title required 2. status must be OPEN | IN_PROGRESS | CLOSED 3. projectId must exist |
 
 ### PUT /api/tickets/{id}
 Update a ticket
